@@ -4,7 +4,6 @@
 //
 //  Created by chudian on 2017/4/5.
 //  Copyright © 2017年 qp. All rights reserved.
-//
 
 import UIKit
 import Photos
@@ -17,7 +16,7 @@ class QPPhotoPickerView: UIView, UICollectionViewDelegate, UICollectionViewDataS
     var QPPhotos = [QPPhotoImageModel]()
     var controller: UIViewController?
     var collectionView: UICollectionView?
-        var imagePickerController:UIImagePickerController = {
+    var imagePickerController:UIImagePickerController = {
         let imagePickerController = UIImagePickerController()
         // 设置是否可以管理已经存在的图片或者视频
         imagePickerController.allowsEditing = true
@@ -110,6 +109,12 @@ class QPPhotoPickerView: UIView, UICollectionViewDelegate, UICollectionViewDataS
         ac.addAction(action)
         controller?.present(ac, animated: true, completion: nil)
     }
+    func initImagePickerController() {
+        self.imagePickerController = UIImagePickerController()
+        self.imagePickerController.delegate = self
+        // 设置是否可以管理已经存在的图片或者视频
+        self.imagePickerController.allowsEditing = true
+    }
     
     func getImageFromPhotoLib(type:UIImagePickerControllerSourceType){
         self.imagePickerController.sourceType = type
@@ -154,6 +159,8 @@ class QPPhotoPickerView: UIView, UICollectionViewDelegate, UICollectionViewDataS
         animation.duration = 0.5
         animation.subtype = kCATransitionFromRight
         UIApplication.shared.keyWindow?.layer.add(animation, forKey: nil)
+        
+        
         controller?.present(nav, animated: false, completion: nil)
     }
     
@@ -174,6 +181,7 @@ class QPPhotoPickerView: UIView, UICollectionViewDelegate, UICollectionViewDataS
         return newModels
     }
 }
+
 extension QPPhotoPickerView: UIImagePickerControllerDelegate,UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         let type:String = (info[UIImagePickerControllerMediaType]as!String)
