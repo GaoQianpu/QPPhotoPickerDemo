@@ -39,6 +39,8 @@ class ViewController: UIViewController {
      */
     func QPPicker(){
         picker = QPPhotoPickerView.init(controller: self, frame: CGRect.init(x: 0, y: 150, width: UIScreen.main.bounds.width, height: 200))
+        //选取照片最大数量
+        picker?.maxNum = 9
         self.view.addSubview(picker!)
     }
     //上传
