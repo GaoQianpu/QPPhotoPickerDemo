@@ -17,7 +17,12 @@ class QPPhotoPickerView: UIView, UICollectionViewDelegate, UICollectionViewDataS
     var QPPhotos = [QPPhotoImageModel]()
     var controller: UIViewController?
     var collectionView: UICollectionView?
-    var imagePickerController:UIImagePickerController!
+        var imagePickerController:UIImagePickerController = {
+        let imagePickerController = UIImagePickerController()
+        // 设置是否可以管理已经存在的图片或者视频
+        imagePickerController.allowsEditing = true
+        return imagePickerController
+    }()
     var maxNum = 9
     
     init(controller: UIViewController, frame: CGRect) {
@@ -25,7 +30,6 @@ class QPPhotoPickerView: UIView, UICollectionViewDelegate, UICollectionViewDataS
         self.backgroundColor = UIColor.white
         self.controller = controller
         createCollectionView()
-        initImagePickerController()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -92,6 +96,7 @@ class QPPhotoPickerView: UIView, UICollectionViewDelegate, UICollectionViewDataS
     func addPhoto(_ indexPath: IndexPath){
         let ac = UIAlertController.init(title: nil, message: nil, preferredStyle: .actionSheet)
         let action1 = UIAlertAction.init(title: "拍照", style: .default) { (action) in
+            self.imagePickerController.delegate = self
             self.getImageFromPhotoLib(type: .camera)
         }
         let action2 = UIAlertAction.init(title: "从手机相册选择", style: .default) { (action) in
@@ -104,12 +109,6 @@ class QPPhotoPickerView: UIView, UICollectionViewDelegate, UICollectionViewDataS
         ac.addAction(action2)
         ac.addAction(action)
         controller?.present(ac, animated: true, completion: nil)
-    }
-    func initImagePickerController() {
-        self.imagePickerController = UIImagePickerController()
-        self.imagePickerController.delegate = self
-        // 设置是否可以管理已经存在的图片或者视频
-        self.imagePickerController.allowsEditing = true
     }
     
     func getImageFromPhotoLib(type:UIImagePickerControllerSourceType){
@@ -155,8 +154,6 @@ class QPPhotoPickerView: UIView, UICollectionViewDelegate, UICollectionViewDataS
         animation.duration = 0.5
         animation.subtype = kCATransitionFromRight
         UIApplication.shared.keyWindow?.layer.add(animation, forKey: nil)
-        
-        
         controller?.present(nav, animated: false, completion: nil)
     }
     
@@ -190,7 +187,9 @@ extension QPPhotoPickerView: UIImagePickerControllerDelegate,UINavigationControl
             model.smallImage = smallImage
             self.QPPhotos.append(model)
             self.collectionView?.reloadData()
-            picker.dismiss(animated:true, completion:nil)
+            picker.dismiss(animated: true, completion: { 
+                self.imagePickerController.delegate = nil
+            })
         }
     }
     func imagePickerControllerDidCancel(_ picker:UIImagePickerController){
